@@ -7,6 +7,7 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
+window.VueRouter = require('vue-router').default;
 
 /**
  * The following block of code may be used to automatically register your
@@ -21,12 +22,57 @@ window.Vue = require('vue');
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
+const EmployeeAdmin = Vue.component(
+	'employee-admin',
+	require('./components/EmployeeAdmin.vue').default
+);
+const EmployeeDetails = Vue.component(
+	'employee-details',
+	require('./components/EmployeeDetails.vue').default
+);
+
+window.AppCtx = require('./app-ctx');
+
+const appData = document.getElementById('app').dataset || {};
+const appCtx = new AppCtx(appData.base_url, appData.token_url);
+
+// Create Vue router.
+const router = new VueRouter({
+	routes: [
+		{
+			path: '/',
+			component: EmployeeAdmin,
+			props: {
+				appctx: appCtx,
+			},
+		},
+		{
+			path: '/employees/:empid(create|\\d+)',
+			component: EmployeeDetails,
+			props: (rt) => {
+				const mode = ('create' == rt.params.empid) ? 'create' : 'view';
+				const empid = (mode!='create')
+					? parseInt(rt.params.empid, 10)
+					: 0;
+				return {
+					appctx: appCtx,
+					mode: mode,
+					empid: empid,
+				};
+			},
+		},
+	],
+});
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-const app = new Vue({
-    el: '#app',
+appCtx.ready().then(() => {
+	new Vue({
+		el: '#app',
+		router: router,
+	});
 });

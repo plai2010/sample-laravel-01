@@ -17,3 +17,17 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::middleware('auth:api')->group(function() {
+	Route::get('/employees', 'EmployeeController@index');
+	Route::get('/employees/{employee}', 'EmployeeController@show');
+
+    // APIs for admin users only.
+    Route::middleware('auth:admin')->group(function() {
+	    Route::post('/employees', 'EmployeeController@store');
+	    Route::put('/employees/{employee}', 'EmployeeController@update');
+	    Route::delete('/employees/{employee}','EmployeeController@destroy');
+    });
+});
+
+// vim: set ts=4 expandtab syntax=php:

@@ -20,7 +20,7 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 <body>
-    <div id="app">
+    <div id="app" data-base_url="{{ config('app.url') }}" data-token_url="{{ $token_url ?? null }}">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
@@ -33,7 +33,22 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
+                        <!-- Employee Management Links -->
+                        @auth
+                        <li class="nav-item dropdown">
+                            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                {{ __('Employees') }}<span class="caret"></span>
+                            </a>
 
+                            <div class="dropdown-menu dropdown-menu-left" aria-labelledby="navbarDropdown">
+                                @auth('admin')
+                                <a class="dropdown-item" href="{{ route('employees.admin') }}">{{__('Admin')}}</a>
+                                <a class="dropdown-item" href="{{ route('employees.admin-spa') }}">{{__('Admin (SPA)')}}</a>
+                                @endauth
+                                <a class="dropdown-item" href="{{ route('employees.index') }}">{{__('Directory')}}</a>
+                            </div>
+                        </li>
+                        @endauth
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -78,3 +93,5 @@
     </div>
 </body>
 </html>
+
+{{-- vim: set ts=4 expandtab syntax=php: --}}

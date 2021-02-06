@@ -33,3 +33,38 @@ Route::get('/api-token', function() {
         ] : null,
     ]);
 })->middleware('auth')->name('api-token.get');
+
+Route::middleware('auth')->group(function() {
+    Route::get('/employees', 'EmployeeController@index')
+        ->name('employees.index');
+    Route::get('/employees/{employee}', 'EmployeeController@show')
+        ->name('employees.show');
+
+    // Requests for admin users only.
+    Route::middleware('auth:admin')->group(function() {
+        Route::get('/employees/create', 'EmployeeController@create')
+            ->name('employees.create');
+        Route::get('/employees/{employee}/edit', 'EmployeeController@edit')
+            ->name('employees.edit');
+        Route::post('/employees', 'EmployeeController@store')
+            ->name('employees.store');
+        Route::put('/employees/{employee}', 'EmployeeController@update')
+            ->name('employees.update');
+        Route::delete('/employees/{employee}', 'EmployeeController@destroy')
+            ->name('employees.destroy');
+
+        Route::get('/employees/admin', 'EmployeeController@admin')
+            ->name('employees.admin');
+        Route::get('/employees/admin/{employee}','EmployeeController@adminShow')
+            ->name('employees.admin.show');
+        Route::get('/employees/admin/spa', function() {
+            $user = Request::user();
+            assert($user->admin ?? false);
+            return view('employees.admin.spa', [
+                'token_url' => route('api-token.get'),
+            ]);
+        })->name('employees.admin-spa');
+    });
+});
+
+// vim: set ts=4 expandtab syntax=php:

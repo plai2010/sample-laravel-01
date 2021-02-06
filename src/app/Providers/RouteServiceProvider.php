@@ -30,7 +30,8 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        // URL parameter patterns.
+        Route::pattern('employee', '[0-9]+');
 
         parent::boot();
     }
@@ -78,3 +79,5 @@ class RouteServiceProvider extends ServiceProvider
             ->group(base_path('routes/api.php'));
     }
 }
+
+// vim: set ts=4 expandtab syntax=php:
