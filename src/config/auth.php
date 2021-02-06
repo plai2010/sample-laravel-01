@@ -46,6 +46,10 @@ return [
             'provider' => 'users',
             'hash' => false,
         ],
+
+        'admin' => [
+            'driver' => 'users_admin',
+        ],
     ],
 
     /*
@@ -115,3 +119,5 @@ return [
     'password_timeout' => 10800,
 
 ];
+
+// vim: set ts=4 expandtab syntax=php:

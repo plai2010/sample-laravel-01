@@ -20,3 +20,16 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+// Retrieve API token. Better mechanism (e.g. Passport or Sanctum)
+// should be used for production.
+Route::get('/api-token', function() {
+    $user = Request::user();
+    assert($user);
+    return response()->json([
+        'access_token' => $user->api_token ? [
+            'type' => 'bearer',
+            'token' => $user->api_token,
+        ] : null,
+    ]);
+})->middleware('auth')->name('api-token.get');
